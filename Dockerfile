@@ -1,4 +1,4 @@
-FROM zenoss/centos-base:1.0.3-java
+FROM zenoss/centos-base:1.1.0-java
 MAINTAINER Zenoss <dev@zenoss.com>
 
 ENV ZK_VERSION 3.4.5
