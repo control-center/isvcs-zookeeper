@@ -5,7 +5,7 @@
 : ${ZK_RESOURCE=/usr/local/serviced/resources/zookeeper}
 
 # Overwrite the default zookeeper config if available
-if [ -e "ZK_RESOURCE/zoo.cfg" ]; then
+if [ -e "$ZK_RESOURCE/zoo.cfg" ]; then
     cp $ZK_RESOURCE/zoo.cfg $ZK_CONFIG
 fi
 
