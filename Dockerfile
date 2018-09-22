@@ -1,7 +1,7 @@
 FROM zenoss/centos-base:1.1.3-java
 MAINTAINER Zenoss <dev@zenoss.com>
 
-ENV ZK_VERSION 3.4.5
+ENV ZK_VERSION 3.4.10
 ENV ZK_URL http://archive.apache.org/dist/zookeeper/zookeeper-${ZK_VERSION}/zookeeper-${ZK_VERSION}.tar.gz
 ENV ZK_PATH /opt/zookeeper-${ZK_VERSION}
 ENV ZK_DATA /var/zookeeper

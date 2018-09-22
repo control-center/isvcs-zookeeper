@@ -12,12 +12,42 @@ fi
 if [ ! -z "$ZKID" ]; then
     echo $ZKID > $ZK_DATA/myid
 fi
+
+if [ -z "$ZK_USERNAME" ]; then
+    ZK_USERNAME="ccuser"
+fi
+
+if [ -z "$ZK_PASSWD" ]; then
+    ZK_PASSWD="zenoss"
+fi
 echo dataDir=$ZK_DATA >> $ZK_CONFIG
 echo clientPort=$ZK_CLIENT_PORT >> $ZK_CONFIG
 if [ ! -z "$ZK_QUORUM" ]; then
+    mkdir -p ${ZK_PATH}/conf/jaas
+    touch ${ZK_PATH}/conf/jaas/file.conf
+    touch ${ZK_PATH}/conf/java.env
+    cat > $ZK_PATH/conf/jaas/file.conf <<EOL
+QuorumServer {
+       org.apache.zookeeper.server.auth.DigestLoginModule required
+       user_$ZK_USERNAME="$ZK_PASSWD";
+};
+
+QuorumLearner {
+       org.apache.zookeeper.server.auth.DigestLoginModule required
+       username="$ZK_USERNAME"
+       password="$ZK_PASSWD";
+};
+EOL
+    printf 'SERVER_JVMFLAGS="-Djava.security.auth.login.config=%s/conf/jaas/file.conf"' "$ZK_PATH" >> $ZK_PATH/conf/java.env
     IFS=',' read -a quorum <<< "$ZK_QUORUM"
     for member in "${quorum[@]}"; do
         echo "$member" | awk -F'@' '{print "server."$1"="$2}' >> $ZK_CONFIG
     done
+    echo 'quorum.auth.enableSasl=true' >> $ZK_CONFIG
+    echo 'quorum.auth.learnerRequireSasl=true' >> $ZK_CONFIG
+    echo 'quorum.auth.serverRequireSasl=true' >> $ZK_CONFIG
+    echo 'quorum.auth.learner.loginContext=QuorumLearner' >> $ZK_CONFIG
+    echo 'quorum.auth.server.loginContext=QuorumServer' >> $ZK_CONFIG
+    echo 'quorum.cnxn.threads.size=20' >> $ZK_CONFIG
 fi
 $ZK_PATH/bin/zkServer.sh start-foreground
