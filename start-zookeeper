@@ -3,6 +3,8 @@
 : ${ZK_CONFIG=$ZK_PATH/conf/zoo.cfg}
 : ${ZK_CLIENT_PORT=2181}
 : ${ZK_RESOURCE=/usr/local/serviced/resources/zookeeper}
+: ${ZK_USERNAME="ccuser"}
+: ${ZK_PASSWD="zenoss"}
 
 # Overwrite the default zookeeper config if available
 if [ -e "$ZK_RESOURCE/zoo.cfg" ]; then
@@ -13,13 +15,6 @@ if [ ! -z "$ZKID" ]; then
     echo $ZKID > $ZK_DATA/myid
 fi
 
-if [ -z "$ZK_USERNAME" ]; then
-    ZK_USERNAME="ccuser"
-fi
-
-if [ -z "$ZK_PASSWD" ]; then
-    ZK_PASSWD="zenoss"
-fi
 echo dataDir=$ZK_DATA >> $ZK_CONFIG
 echo clientPort=$ZK_CLIENT_PORT >> $ZK_CONFIG
 if [ ! -z "$ZK_QUORUM" ]; then
