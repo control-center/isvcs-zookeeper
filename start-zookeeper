@@ -45,4 +45,5 @@ EOL
     echo 'quorum.auth.server.loginContext=QuorumServer' >> $ZK_CONFIG
     echo 'quorum.cnxn.threads.size=20' >> $ZK_CONFIG
 fi
+export SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=* $SERVER_JVMFLAGS"
 $ZK_PATH/bin/zkServer.sh start-foreground
