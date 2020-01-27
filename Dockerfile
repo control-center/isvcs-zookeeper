@@ -1,9 +1,9 @@
 FROM zenoss/centos-base:1.1.3-java
 MAINTAINER Zenoss <dev@zenoss.com>
 
-ENV ZK_VERSION 3.4.10
-ENV ZK_URL http://archive.apache.org/dist/zookeeper/zookeeper-${ZK_VERSION}/zookeeper-${ZK_VERSION}.tar.gz
-ENV ZK_PATH /opt/zookeeper-${ZK_VERSION}
+ENV ZK_VERSION 3.5.5
+ENV ZK_URL http://archive.apache.org/dist/zookeeper/zookeeper-${ZK_VERSION}/apache-zookeeper-${ZK_VERSION}-bin.tar.gz
+ENV ZK_PATH /opt/apache-zookeeper-${ZK_VERSION}-bin
 ENV ZK_DATA /var/zookeeper
 ENV EXHIBITOR_VERSION 1.5.5
 ENV EXHIBITOR_URL http://central.maven.org/maven2/com/netflix/exhibitor/exhibitor-standalone/${EXHIBITOR_VERSION}/exhibitor-standalone-${EXHIBITOR_VERSION}.jar
