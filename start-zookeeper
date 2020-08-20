@@ -16,7 +16,7 @@ if [ ! -z "$ZKID" ]; then
 fi
 
 echo dataDir=$ZK_DATA >> $ZK_CONFIG
-echo clientPort=$ZK_CLIENT_PORT >> $ZK_CONFIG
+echo secureClientPort=$ZK_CLIENT_PORT >> $ZK_CONFIG
 if [ ! -z "$ZK_QUORUM" ]; then
     mkdir -p ${ZK_PATH}/conf/jaas
     touch ${ZK_PATH}/conf/jaas/file.conf
@@ -45,5 +45,18 @@ EOL
     echo 'quorum.auth.server.loginContext=QuorumServer' >> $ZK_CONFIG
     echo 'quorum.cnxn.threads.size=20' >> $ZK_CONFIG
 fi
-export SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=* $SERVER_JVMFLAGS"
+
+mkdir ${ZK_PATH}/ssl
+keytool -genkeypair -alias localhost -keyalg RSA -keysize 2048 -dname "cn=localhost" -keypass zenossPasswd -keystore $ZK_PATH/ssl/keystore.jks -storepass zenossPasswd
+echo zenossPasswd | keytool -exportcert -alias localhost -keystore $ZK_PATH/ssl/keystore.jks -file $ZK_PATH/ssl/localhost.cer -rfc
+echo yes | keytool -importcert -alias localhost -file $ZK_PATH/ssl/localhost.cer -keystore $ZK_PATH/ssl/truststore.jks -storepass zenossPasswd
+
+export SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=*
+                        -Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+                        -Dzookeeper.ssl.keyStore.location=$ZK_PATH/ssl/keystore.jks
+                        -Dzookeeper.ssl.keyStore.password=zenossPasswd
+                        -Dzookeeper.ssl.trustStore.location=$ZK_PATH/ssl/truststore.jks
+                        -Dzookeeper.ssl.trustStore.password=zenossPasswd
+                        -Dzookeeper.ssl.clientAuth=none
+                        $SERVER_JVMFLAGS"
 $ZK_PATH/bin/zkServer.sh start-foreground
