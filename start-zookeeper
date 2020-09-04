@@ -17,6 +17,7 @@ fi
 
 echo dataDir=$ZK_DATA >> $ZK_CONFIG
 echo clientPort=$ZK_CLIENT_PORT >> $ZK_CONFIG
+export SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=* $SERVER_JVMFLAGS"
 if [ ! -z "$ZK_QUORUM" ]; then
     mkdir -p ${ZK_PATH}/conf/jaas
     touch ${ZK_PATH}/conf/jaas/file.conf
@@ -33,7 +34,7 @@ QuorumLearner {
        password="$ZK_PASSWD";
 };
 EOL
-    printf 'SERVER_JVMFLAGS="-Djava.security.auth.login.config=%s/conf/jaas/file.conf"' "$ZK_PATH" >> $ZK_PATH/conf/java.env
+    printf 'SERVER_JVMFLAGS="-Djava.security.auth.login.config=%s/conf/jaas/file.conf $SERVER_JVMFLAGS"' "$ZK_PATH" >> $ZK_PATH/conf/java.env
     IFS=',' read -a quorum <<< "$ZK_QUORUM"
     for member in "${quorum[@]}"; do
         echo "$member" | awk -F'@' '{print "server."$1"="$2}' >> $ZK_CONFIG
@@ -45,5 +46,4 @@ EOL
     echo 'quorum.auth.server.loginContext=QuorumServer' >> $ZK_CONFIG
     echo 'quorum.cnxn.threads.size=20' >> $ZK_CONFIG
 fi
-export SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=* $SERVER_JVMFLAGS"
 $ZK_PATH/bin/zkServer.sh start-foreground
