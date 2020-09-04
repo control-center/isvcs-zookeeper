@@ -34,7 +34,7 @@ QuorumLearner {
        password="$ZK_PASSWD";
 };
 EOL
-    printf 'SERVER_JVMFLAGS="-Djava.security.auth.login.config=%s/conf/jaas/file.conf $SERVER_JVMFLAGS"' "$ZK_PATH" >> $ZK_PATH/conf/java.env
+    printf 'SERVER_JVMFLAGS="-Dzookeeper.4lw.commands.whitelist=* -Djava.security.auth.login.config=%s/conf/jaas/file.conf"' "$ZK_PATH" >> $ZK_PATH/conf/java.env
     IFS=',' read -a quorum <<< "$ZK_QUORUM"
     for member in "${quorum[@]}"; do
         echo "$member" | awk -F'@' '{print "server."$1"="$2}' >> $ZK_CONFIG
