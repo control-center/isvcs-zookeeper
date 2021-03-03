@@ -1,5 +1,5 @@
 IMAGENAME  = isvcs-zookeeper
-VERSION   ?= v13
+VERSION   ?= v14
 TAG = zenoss/$(IMAGENAME):$(VERSION)
 
 .PHONY: build build-base build-java push clean
